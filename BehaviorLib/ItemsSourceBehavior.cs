@@ -77,10 +77,9 @@ namespace BehaviorLib
             }
 
             // Now we want to create an instance of an ObservableCollection with the same generic parameter as the itemsSource IList
-            //var itemsSourceType = itemsSource.GetType();
-            //var listType = typeof(ObservableCollection<>).MakeGenericType(itemsSourceType.GetGenericArguments()[0]);
-            //var mirrorItemsSource = (IList)Activator.CreateInstance(listType);
-            var mirrorItemsSource = new ObservableCollection<object>();
+            var itemsSourceType = itemsSource.GetType();
+            var listType = typeof(ObservableCollection<>).MakeGenericType(itemsSourceType.GetGenericArguments()[0]);
+            var mirrorItemsSource = (IList)Activator.CreateInstance(listType);
             // The real ItemsSource becomes the mirror instance we just created
             itemsControl.ItemsSource = mirrorItemsSource;           // The following binding also worked
                                                                     //itemsControl.SetBinding(ItemsControl.ItemsSourceProperty, new Binding { Source = mirrorItemsSource });
