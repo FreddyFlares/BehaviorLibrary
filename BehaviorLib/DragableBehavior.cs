@@ -12,29 +12,32 @@ namespace BehaviorLib
 {
     public static partial class Behavior
     {
-        // Dragable Behavior for FrameworkElements with a parent Canvas
+        // Dragable Behavior for UIElements
         #region Attached DragableProperty
         public static readonly DependencyProperty DragableProperty = DependencyProperty.RegisterAttached
             ("Dragable", typeof(bool), typeof(Behavior), new PropertyMetadata(dragableChanged));
 
-        public static bool GetDragable(FrameworkElement element)
+        public static bool GetDragable(UIElement element)
         {
             return (bool)element.GetValue(DragableProperty);
         }
 
-        public static void SetDragable(FrameworkElement element, bool dragable)
+        public static void SetDragable(UIElement element, bool dragable)
         {
             element.SetValue(DragableProperty, dragable);
         }
 
-        // The FrameworkElement being dragged
-        static FrameworkElement element;
-        // Drag position relative to the element
-        static Point dragPos;
+        // The UIElement being dragged
+        static UIElement element;
+        static TransformCollection transforms;
+        // Start drag mouse position relative to the window
+        static Point startDragPos;
+        // The TranslateTransform to store the transformation
+        static TranslateTransform transform = new TranslateTransform(0,0);
 
         static void dragableChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
-            FrameworkElement element = o as FrameworkElement;
+            UIElement element = o as UIElement;
             if (element != null)
             {
                 if (e.NewValue.Equals(true) && e.OldValue.Equals(false))
@@ -46,31 +49,56 @@ namespace BehaviorLib
 
         static void element_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            element = (FrameworkElement)sender;
-            Canvas canvas = element.Parent as Canvas;
-            if (canvas == null)
+            element = (UIElement)sender;
+            if (!(element.RenderTransform is TransformGroup))
                 return;
-            canvas.PreviewMouseMove += canvas_PreviewMouseMove;
-            canvas.PreviewMouseUp += canvas_PreviewMouseUp;
-            dragPos = e.GetPosition(element);
-            canvas.CaptureMouse();
+            Window window = FindAncestor<Window>(element);
+            if (window == null)
+                return;
+            transforms = ((TransformGroup)element.RenderTransform).Children;
+            //window.CaptureMouse();                  // Put this line before wiring the event handlers
+            window.PreviewMouseMove += window_PreviewMouseMove;
+            window.PreviewMouseUp += window_PreviewMouseUp;
+            startDragPos = e.GetPosition(window);
+            transform.X = 0;
+            transform.Y = 0;
+            transforms.Add(transform);
         }
 
-        static void canvas_PreviewMouseMove(object sender, MouseEventArgs e)
+        static void window_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            Canvas canvas = (Canvas)sender;
-            Point newMousePosition = e.GetPosition(canvas);
-            Canvas.SetLeft(element, newMousePosition.X - dragPos.X);
-            Canvas.SetTop(element, newMousePosition.Y - dragPos.Y);
+            Window window = (Window)sender;
+            Point newMousePosition = e.GetPosition(window);
+            transform.X = newMousePosition.X - startDragPos.X;
+            transform.Y = newMousePosition.Y - startDragPos.Y;
         }
 
-        static void canvas_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        static void window_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
-            Canvas canvas = (Canvas)sender;
-            canvas.PreviewMouseMove -= canvas_PreviewMouseMove;
-            canvas.PreviewMouseUp -= canvas_PreviewMouseUp;
-            canvas.ReleaseMouseCapture();
+            Window window = (Window)sender;
+            window.PreviewMouseMove -= window_PreviewMouseMove;
+            window.PreviewMouseUp -= window_PreviewMouseUp;
+            //window.ReleaseMouseCapture();           // After releasing the event handlers
+            transforms.Remove(transform);
+            TranslateTransform last = (TranslateTransform)transforms.LastOrDefault((tr) => tr is TranslateTransform);
+            if (last != null)
+            {
+                last.X += transform.X;
+                last.Y += transform.Y;
+            }
+            else
+            {
+                transforms.Add(new TranslateTransform(transform.X, transform.Y));
+            }
         }
         #endregion
+
+        static T FindAncestor<T>(DependencyObject element) where T : DependencyObject
+        {
+            do { 
+                element = VisualTreeHelper.GetParent(element);
+            } while (element != null && !(element is T));
+            return element as T;
+        }
     }
 }

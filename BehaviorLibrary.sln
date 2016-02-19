@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnimateAddRemoveTest", "Ani
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BehaviorLib", "BehaviorLib\BehaviorLib.csproj", "{2B17665A-1C7D-48D6-9198-3FBC3EDA1D97}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DragTest", "DragTest\DragTest.csproj", "{DCAD3CF4-0FC5-439E-B6A8-8FA0E9CE3B49}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{2B17665A-1C7D-48D6-9198-3FBC3EDA1D97}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B17665A-1C7D-48D6-9198-3FBC3EDA1D97}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B17665A-1C7D-48D6-9198-3FBC3EDA1D97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCAD3CF4-0FC5-439E-B6A8-8FA0E9CE3B49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCAD3CF4-0FC5-439E-B6A8-8FA0E9CE3B49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCAD3CF4-0FC5-439E-B6A8-8FA0E9CE3B49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCAD3CF4-0FC5-439E-B6A8-8FA0E9CE3B49}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
