@@ -56,7 +56,7 @@ namespace BehaviorLib
             if (window == null)
                 return;
             transforms = ((TransformGroup)element.RenderTransform).Children;
-            //window.CaptureMouse();                  // Put this line before wiring the event handlers
+            window.CaptureMouse();                  // Put this line before wiring the event handlers
             window.PreviewMouseMove += window_PreviewMouseMove;
             window.PreviewMouseUp += window_PreviewMouseUp;
             startDragPos = e.GetPosition(window);
@@ -78,7 +78,7 @@ namespace BehaviorLib
             Window window = (Window)sender;
             window.PreviewMouseMove -= window_PreviewMouseMove;
             window.PreviewMouseUp -= window_PreviewMouseUp;
-            //window.ReleaseMouseCapture();           // After releasing the event handlers
+            window.ReleaseMouseCapture();           // After releasing the event handlers
             transforms.Remove(transform);
             TranslateTransform last = (TranslateTransform)transforms.LastOrDefault((tr) => tr is TranslateTransform);
             if (last != null)
